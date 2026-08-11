@@ -1,4 +1,4 @@
-const CACHE = 'ec-v2';
+const CACHE = 'ec-v3-fresh';
 const OFFLINE = '/offline.html';
 const PRE = ['/', '/index.html', '/offline.html', '/manifest.json',
              '/icons/icon-192x192.png', '/icons/icon-512x512.png'];
