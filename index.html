@@ -4120,6 +4120,86 @@ let deferredPrompt=null;
 function applyLayout() {
   // CSS handles layout - no JS needed
 }
+
+// ── RESPONDING AGENCIES ────────────────────────────────────────────────────
+let fireCnt=0, emsCnt=0, leCnt=0;
+
+function togAgency(type) {
+  const body = document.getElementById('body-agency-'+type);
+  const chev = document.getElementById('chev-agency-'+type);
+  if (!body) return;
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  if (chev) chev.style.transform = open ? '' : 'rotate(180deg)';
+}
+
+function makeInput(ph, val='', extra='') {
+  return `<input type="text" placeholder="${ph}" value="${val}" ${extra} style="height:28px;border-radius:7px;border:0.5px solid rgba(0,0,0,0.15);background:#f0eeea;padding:0 8px;font-size:11px;color:#222;width:100%;font-family:inherit;">`;
+}
+function makeSelect(opts, sel=0) {
+  return `<select style="height:28px;border-radius:7px;border:0.5px solid rgba(0,0,0,0.15);background:#f0eeea;padding:0 5px;font-size:11px;color:#222;cursor:pointer;font-family:inherit;">${opts.map((o,i)=>`<option${i===sel?' selected':''}>${o}</option>`).join('')}</select>`;
+}
+
+function addFireUnit() {
+  fireCnt++;
+  const el = document.getElementById('fire-agency-count');
+  if (el) el.textContent = fireCnt + (fireCnt===1?' unit':' units');
+  const container = document.getElementById('fire-units-container');
+  if (!container) return;
+  const div = document.createElement('div');
+  div.style.cssText = 'background:#fff;border:0.5px solid rgba(0,0,0,0.1);border-radius:10px;padding:10px 12px;margin-bottom:8px;';
+  div.innerHTML = `<div style="display:flex;align-items:center;gap:7px;margin-bottom:6px;"><span style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:6px;background:#FCEBEB;color:#E24B4A;flex-shrink:0;">Unit</span>${makeInput('Engine / truck number')}</div><div style="display:grid;grid-template-columns:1fr 90px 90px;gap:6px;margin-bottom:8px;"><div><div style="font-size:9px;color:#888;margin-bottom:3px;">Agency</div>${makeInput('Agency name')}</div><div><div style="font-size:9px;color:#888;margin-bottom:3px;">Arrival</div>${makeInput('0000','','style="font-family:monospace;text-align:center;"')}</div><div><div style="font-size:9px;color:#888;margin-bottom:3px;">Departure</div>${makeInput('0000','','style="font-family:monospace;text-align:center;"')}</div></div><div class="fire-personnel-${fireCnt}"><div style="display:grid;grid-template-columns:70px 1fr 90px;gap:5px;margin-bottom:5px;">${makeInput('E-####','','style="font-family:monospace;"')}${makeInput('Last, First')}${makeSelect(['FF/EMT','EMT','Paramedic'])}</div></div><button onclick="addFirePersonnel(${fireCnt})" style="font-size:10px;color:#888;border:0.5px dashed rgba(0,0,0,0.15);border-radius:7px;padding:5px 10px;background:transparent;cursor:pointer;width:100%;font-family:inherit;margin-top:4px;">+ Add personnel</button>`;
+  container.appendChild(div);
+}
+function addFirePersonnel(u) {
+  const c = document.querySelector('.fire-personnel-'+u); if (!c) return;
+  const r = document.createElement('div'); r.style.cssText='display:grid;grid-template-columns:70px 1fr 90px;gap:5px;margin-bottom:5px;';
+  r.innerHTML=`${makeInput('E-####','','style="font-family:monospace;"')}${makeInput('Last, First')}${makeSelect(['FF/EMT','EMT','Paramedic'])}`; c.appendChild(r);
+}
+function addEmsUnit() {
+  emsCnt++;
+  const el = document.getElementById('ems-agency-count');
+  if (el) el.textContent = emsCnt + (emsCnt===1?' unit':' units');
+  const container = document.getElementById('ems-units-container');
+  if (!container) return;
+  const div = document.createElement('div');
+  div.style.cssText = 'background:#fff;border:0.5px solid rgba(0,0,0,0.1);border-radius:10px;padding:10px 12px;margin-bottom:8px;';
+  div.innerHTML = `<div style="display:flex;align-items:center;gap:7px;margin-bottom:6px;"><span style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:6px;background:#EAF3DE;color:#3B6D11;flex-shrink:0;">Unit</span>${makeInput('Medic unit number')}</div><div style="display:grid;grid-template-columns:1fr 90px 90px;gap:6px;margin-bottom:8px;"><div><div style="font-size:9px;color:#888;margin-bottom:3px;">Agency</div>${makeInput('EMS service name')}</div><div><div style="font-size:9px;color:#888;margin-bottom:3px;">Arrival</div>${makeInput('0000','','style="font-family:monospace;text-align:center;"')}</div><div><div style="font-size:9px;color:#888;margin-bottom:3px;">Departure</div>${makeInput('0000','','style="font-family:monospace;text-align:center;"')}</div></div><div class="ems-personnel-${emsCnt}"><div style="display:grid;grid-template-columns:70px 1fr 90px;gap:5px;margin-bottom:5px;">${makeInput('P-####','','style="font-family:monospace;"')}${makeInput('Last, First')}${makeSelect(['Paramedic','EMT'])}</div></div><button onclick="addEmsPersonnel(${emsCnt})" style="font-size:10px;color:#888;border:0.5px dashed rgba(0,0,0,0.15);border-radius:7px;padding:5px 10px;background:transparent;cursor:pointer;width:100%;font-family:inherit;margin-top:4px;">+ Add personnel</button>`;
+  container.appendChild(div);
+}
+function addEmsPersonnel(u) {
+  const c = document.querySelector('.ems-personnel-'+u); if (!c) return;
+  const r = document.createElement('div'); r.style.cssText='display:grid;grid-template-columns:70px 1fr 90px;gap:5px;margin-bottom:5px;';
+  r.innerHTML=`${makeInput('P-####','','style="font-family:monospace;"')}${makeInput('Last, First')}${makeSelect(['Paramedic','EMT'])}`; c.appendChild(r);
+}
+function addLeOfficer() {
+  leCnt++;
+  const el = document.getElementById('le-agency-count');
+  if (el) el.textContent = leCnt + (leCnt===1?' officer':' officers');
+  const container = document.getElementById('le-units-container');
+  if (!container) return;
+  const div = document.createElement('div');
+  div.id = 'le-card-'+leCnt;
+  div.style.cssText = 'background:#fff;border:0.5px solid #85B7EB;border-radius:10px;padding:10px 12px;margin-bottom:8px;';
+  div.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><span style="font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;background:#E6F1FB;color:#185FA5;" id="le-pill-${leCnt}">Primary officer</span><div style="display:flex;background:#f0eeea;border-radius:8px;padding:2px;gap:2px;"><button onclick="setLERole(${leCnt},'primary',this)" style="padding:4px 10px;border:none;border-radius:6px;font-size:10px;cursor:pointer;background:#E6F1FB;color:#185FA5;font-family:inherit;" class="le-seg-btn-${leCnt}">Primary</button><button onclick="setLERole(${leCnt},'cover',this)" style="padding:4px 10px;border:none;border-radius:6px;font-size:10px;cursor:pointer;background:transparent;color:#888;font-family:inherit;" class="le-seg-btn-${leCnt}">Cover</button></div></div><div style="font-size:9px;color:#888;margin-bottom:4px;">Agency / department</div>${makeInput('Agency or department name')}<div style="display:grid;grid-template-columns:1fr 90px 90px;gap:6px;margin:6px 0;"><div><div style="font-size:9px;color:#888;margin-bottom:3px;">Officer</div><div style="display:grid;grid-template-columns:1fr 48px 95px;gap:5px;">${makeInput('Last name')}${makeInput('F.I.','','style="text-align:center;"')}${makeInput('Badge / ID #','','style="font-family:monospace;"')}</div></div><div><div style="font-size:9px;color:#888;margin-bottom:3px;">Arrival</div>${makeInput('0000','','style="font-family:monospace;text-align:center;"')}</div><div><div style="font-size:9px;color:#888;margin-bottom:3px;">Departure</div>${makeInput('0000','','style="font-family:monospace;text-align:center;"')}</div></div><div style="display:flex;align-items:center;justify-content:space-between;padding-top:6px;border-top:0.5px solid rgba(0,0,0,0.07);"><span style="font-size:9px;color:#888;">Actions taken</span><div style="display:flex;gap:8px;flex-wrap:wrap;"><label style="font-size:10px;color:#555;"><input type="checkbox"> Took report</label><label style="font-size:10px;color:#555;"><input type="checkbox"> Arrest</label><label style="font-size:10px;color:#555;"><input type="checkbox"> Transport</label><label style="font-size:10px;color:#555;"><input type="checkbox"> Citation</label></div></div>`;
+  container.appendChild(div);
+}
+function setLERole(num, role, btn) {
+  document.querySelectorAll('.le-seg-btn-'+num).forEach(b=>{b.style.background='transparent';b.style.color='#888';});
+  const card=document.getElementById('le-card-'+num);
+  const pill=document.getElementById('le-pill-'+num);
+  if(role==='primary'){btn.style.background='#E6F1FB';btn.style.color='#185FA5';if(card)card.style.borderColor='#85B7EB';if(pill)pill.textContent='Primary officer';}
+  else{btn.style.background='#f0eeea';btn.style.color='#555';if(card)card.style.borderColor='rgba(0,0,0,0.1)';if(pill)pill.textContent='Cover officer';}
+}
+
+// ── SCRIBE SYSTEM ──────────────────────────────────────────────────────────
+const ROSTER=[{name:'Sgt. M. Torres',initials:'MT',role:'Supervisor'},{name:'Ofc. J. Rivera',initials:'JR',role:'Gate A'},{name:'Ofc. S. Patel',initials:'SP',role:'Gate A — Backup'},{name:'Ofc. D. Chen',initials:'DC',role:'Gate B'},{name:'Ofc. K. Washington',initials:'KW',role:'Patrol East'}];
+let scribeOfficer=null;
+function activateScribe(){const selector=document.getElementById('scribe-selector');const rosterEl=document.getElementById('scribe-roster');if(!selector||!rosterEl)return;rosterEl.innerHTML='';ROSTER.forEach((p,i)=>{const btn=document.createElement('button');btn.style.cssText='display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;border:0.5px solid rgba(0,0,0,0.1);background:#f9f9f7;cursor:pointer;font-family:inherit;width:100%;text-align:left;margin-bottom:5px;';btn.innerHTML=`<div style="width:28px;height:28px;border-radius:50%;background:#EEEDFE;color:#3C3489;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0;">${p.initials}</div><div><div style="font-size:12px;font-weight:600;color:#222;">${p.name}</div><div style="font-size:9px;color:#888;">${p.role}</div></div>`;btn.onclick=()=>assignScribe(i);rosterEl.appendChild(btn);});selector.style.display='block';}
+function assignScribe(idx){scribeOfficer=ROSTER[idx];const now=new Date();const ts=`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')} hrs`;const inactive=document.getElementById('scribe-inactive');const selector=document.getElementById('scribe-selector');const active=document.getElementById('scribe-active');const nameDisplay=document.getElementById('scribe-name-display');const logEntry=document.getElementById('scribe-log-entry');if(inactive)inactive.style.display='none';if(selector)selector.style.display='none';if(active)active.style.display='block';if(nameDisplay)nameDisplay.textContent=`${scribeOfficer.name} — designated ${ts}`;if(logEntry)logEntry.textContent=`System log: Scribe mode activated ${ts} by supervisor. ${scribeOfficer.name} designated.`;showToast('✍', 'Scribe designated',`${scribeOfficer.name} — responding agencies only.`);}
+function closeScribeSelector(){const s=document.getElementById('scribe-selector');if(s)s.style.display='none';}
+function deactivateScribe(){scribeOfficer=null;const active=document.getElementById('scribe-active');const inactive=document.getElementById('scribe-inactive');if(active)active.style.display='none';if(inactive)inactive.style.display='flex';}
+
 // Change DEMO_CODE to update the access code — all existing installs lock out immediately
 // ── PLATFORM DETECTION ────────────────────────────────────────────────────
 (function detectPlatform() {
