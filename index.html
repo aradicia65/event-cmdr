@@ -4215,7 +4215,7 @@ function deactivateScribe(){scribeOfficer=null;const active=document.getElementB
                        window.matchMedia('(display-mode: standalone)').matches;
 
   // Apply platform class to body immediately
-  if (isIOS || isIPadOS) {
+  if (isIOS || isMobile) {
     document.body.classList.add('platform-ios');
     // Fix for iOS viewport height bug
     const setVh = () => {
