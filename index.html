@@ -11,42 +11,40 @@
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <title>Event Commander</title>
 <style>
-/* ══ LAYOUT ══════════════════════════════════════════════ */
+/* ══ LAYOUT — UBER PATTERN ════════════════════════════════
+   html/body fill the viewport, #app is a flex column that
+   exactly fills it: header(s) shrink-0, screen flexes to
+   fill remaining space, nav shrinks-0 at the bottom.
+   No position:fixed, no !important, no JS height hacks.
+════════════════════════════════════════════════════════ */
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;overflow:hidden;background:#26215C;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}
 #app{display:flex;flex-direction:column;width:100%;height:100dvh;background:#f0eeea;}
 #tier-banner{flex-shrink:0;background:linear-gradient(135deg,#1a1730,#26215C);padding:6px 12px;padding-top:calc(env(safe-area-inset-top,0px) + 6px);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #3C3489;}
 .hdr{flex-shrink:0;background:#26215C;padding:8px 14px 10px;padding-top:calc(env(safe-area-inset-top,0) + 8px);}
-.screen{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:11px;padding-bottom:16px;min-height:0;}
+.screen{flex:1 1 0%;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:11px;padding-bottom:16px;min-height:0;}
 .screen::-webkit-scrollbar{display:none;}
 .screen.hidden{display:none;}
-.nav{flex-shrink:0;background:#26215C;display:flex;align-items:stretch;border-top:2px solid #3C3489;padding-bottom:env(safe-area-inset-bottom,0px);min-height:54px;}
-.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;border:none;background:transparent;cursor:pointer;padding:3px 0;font-size:7px;font-weight:500;font-family:inherit;min-height:42px;justify-content:center;position:relative;}
-.nb svg{width:19px;height:19px;fill:#EF9F27;transition:fill 0.15s;}
+/* NAV — flex-shrink:0 keeps it pinned at bottom of #app */
+.nav{flex-shrink:0;background:#26215C;display:flex;align-items:stretch;border-top:2px solid #3C3489;min-height:54px;padding-bottom:env(safe-area-inset-bottom,0px);}
+/* NAV BUTTONS */
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:none;background:transparent;cursor:pointer;padding:6px 0;font-size:7px;font-weight:500;font-family:inherit;position:relative;color:#EF9F27;}
+.nb svg{width:20px;height:20px;fill:#EF9F27;transition:fill 0.15s;}
 .nb span{color:#EF9F27;transition:color 0.15s;}
 .nb.active svg{fill:#fff;}
 .nb.active span{color:#fff;}
-/* ═══════════════════════════════════════════════════════ */
-
-
-/* duplicates removed */
-
-.screen::-webkit-scrollbar{display:none;}
-
-
-/* ── HEADER sits above screen content ── */
-
-/* ── TIER BANNER sits at very top ── */
-
-/* ── DYNAMIC TOP OFFSET for screen content ── */
-/* tier banner ~32px + header ~62px = ~94px total */
-
-/* ── INSTALL BANNER ── */
-.install-banner{background:#3C3489;padding:10px 14px;display:none;align-items:center;gap:9px;flex-shrink:0;}
-.install-banner.show{display:flex;}
+.nb.grayed{opacity:0.4;cursor:pointer;}
+.nb.grayed svg{fill:#888;}
+.nb.grayed span{color:#888;}
+.lock-dot{position:absolute;top:2px;right:calc(50% - 14px);width:10px;height:10px;background:#EF9F27;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:6px;}
+.nb.reports-tab svg{fill:#CAEB00;}
+.nb.reports-tab span{color:#CAEB00;}
+.nb.reports-tab.active svg,.nb.med-tab.active svg{fill:#fff;}
+.nb.reports-tab.active span,.nb.med-tab.active span{color:#fff;}
+.nb.med-tab svg{fill:#F09595;}
+.nb.med-tab span{color:#F09595;}
 
 /* ── TIER BANNER ─── */
-
 .tier-label{font-size:9px;font-weight:500;color:#AFA9EC;letter-spacing:0.06em;text-transform:uppercase;}
 .tier-btns{display:flex;gap:4px;}
 .tier-btn{font-size:9px;font-weight:600;padding:3px 9px;border-radius:20px;border:1px solid;cursor:pointer;transition:all 0.15s;background:transparent;font-family:inherit;}
@@ -58,7 +56,6 @@ html,body{height:100%;overflow:hidden;background:#26215C;font-family:-apple-syst
 .tier-btn.active.ent{background:#085041;color:#fff;border-color:#085041;}
 
 /* ── HEADER ─── */
-
 .hdr-row{display:flex;align-items:flex-start;justify-content:space-between;}
 .app-nm{font-size:16px;font-weight:600;color:#fff;}
 .evt-sub{font-size:9px;font-weight:500;color:#EF9F27;margin-top:2px;}
@@ -68,30 +65,9 @@ html,body{height:100%;overflow:hidden;background:#26215C;font-family:-apple-syst
 .pill-alert{background:#FCEBEB;color:#791F1F;}
 .mode-btn{background:rgba(255,255,255,0.1);border:none;border-radius:20px;padding:3px 9px;font-size:8px;color:#fff;font-weight:500;cursor:pointer;font-family:inherit;}
 
-/* ── SCREENS ─── */
-.screen::-webkit-scrollbar{display:none;}
-
-
-/* ── NAV BUTTONS ── */
-
-.nb svg{width:20px;height:20px;fill:#EF9F27;transition:fill 0.15s;}
-.nb span{color:#EF9F27;transition:color 0.15s;}
-.nb.active svg{fill:#fff;}
-.nb.active span{color:#fff;}
-/* Grayed tab */
-.nb.grayed{opacity:0.4;cursor:pointer;}
-.nb.grayed svg{fill:#888;}
-.nb.grayed span{color:#888;}
-.lock-dot{position:absolute;top:2px;right:calc(50% - 14px);width:10px;height:10px;background:#EF9F27;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:6px;}
-/* Reports tab special color */
-.nb.reports-tab svg{fill:#CAEB00;}
-.nb.reports-tab span{color:#CAEB00;}
-.nb.reports-tab.active svg{fill:#fff;}
-.nb.reports-tab.active span{color:#fff;}
-.nb.med-tab svg{fill:#F09595;}
-.nb.med-tab span{color:#F09595;}
-.nb.med-tab.active svg{fill:#fff;}
-.nb.med-tab.active span{color:#fff;}
+/* ── INSTALL BANNER ─── */
+.install-banner{background:#3C3489;padding:10px 14px;display:none;align-items:center;gap:9px;flex-shrink:0;}
+.install-banner.show{display:flex;}
 
 /* ── CARDS ─── */
 .card{background:#fff;border:0.5px solid rgba(0,0,0,0.1);border-radius:13px;padding:11px 13px;margin-bottom:9px;}
@@ -252,9 +228,6 @@ textarea{width:100%;border-radius:9px;border:0.5px solid rgba(0,0,0,0.15);backgr
 .pitch-controls{display:flex;gap:10px;justify-content:center;padding:16px;flex-shrink:0;}
 .pitch-controls button{padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:inherit;}
 
-/* ── INSTALL BANNER ─── */
-.install-banner{background:#3C3489;padding:10px 14px;display:flex;align-items:center;gap:9px;flex-shrink:0;display:none;}
-.install-banner.show{display:flex;}
 .install-text{flex:1;font-size:11px;color:#CECBF6;line-height:1.4;}
 .install-text strong{color:#fff;display:block;margin-bottom:1px;}
 .install-btn{background:#EF9F27;color:#412402;border:none;border-radius:9px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;font-family:inherit;}
@@ -285,11 +258,10 @@ textarea{width:100%;border-radius:9px;border:0.5px solid rgba(0,0,0,0.15);backgr
 .id-option.selected .id-option-radio{background:#3C3489;border-color:#3C3489;}
 
 /* ── NIGHT / HICON MODES ─── */
-body.night 
 body.night .card{background:#16132a;border-color:#26215C;}
 body.night .stat,body.night .drop-field,body.night .log-area{background:#0d0b18;}
 body.night .stat-v,body.night .drop-val,body.night .p-name{color:#CAEB00;}
-body.night .section-lbl,.night .drop-lbl,.night .p-sub{color:#534AB7;}
+body.night .section-lbl,body.night .drop-lbl,body.night .p-sub{color:#534AB7;}
 body.night .p-row{border-bottom-color:#26215C;}
 body.night .tog-name{color:#fff;} body.night .tog-row{border-bottom-color:#26215C;}
 body.night .act-card{background:#16132a;}
@@ -298,15 +270,12 @@ body.night .act-card.amb{background:#160e00;border-color:#633806;}
 body.night .act-t.red{color:#F09595;} body.night .act-t.amb{color:#EF9F27;}
 body.night textarea{background:#0d0b18;color:#fff;border-color:#26215C;}
 body.night .seg{background:#0d0b18;} body.night .seg-btn.active{background:#16132a;color:#CAEB00;}
-body.night 
 body.night .nb svg{fill:#CAEB00;} body.night .nb span{color:#CAEB00;}
 body.night .nb.active svg{fill:#fff;} body.night .nb.active span{color:#fff;}
-body.hicon 
 body.hicon .card{background:#000;border-color:#CAEB00;}
-body.hicon .stat,.hicon .drop-field{background:#111;border:0.5px solid #333;}
-body.hicon .stat-v,.hicon .p-name,.hicon .drop-val{color:#fff;}
-body.hicon .section-lbl,.hicon .drop-lbl{color:#CAEB00;}
-body.hicon 
+body.hicon .stat,body.hicon .drop-field{background:#111;border:0.5px solid #333;}
+body.hicon .stat-v,body.hicon .p-name,body.hicon .drop-val{color:#fff;}
+body.hicon .section-lbl,body.hicon .drop-lbl{color:#CAEB00;}
 body.hicon .nb svg{fill:#CAEB00;} body.hicon .nb span{color:#CAEB00;}
 body.hicon .toggle.on{background:#CAEB00;} body.hicon .toggle.on::after{background:#000;}
 
@@ -316,9 +285,13 @@ body.platform-ios .nav {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 /* Desktop — center the app */
+body.platform-desktop {
+  display: flex;
+  justify-content: center;
+}
 body.platform-desktop #app {
   max-width: 480px;
-  margin: 0 auto;
+  height: 100dvh;
 }
 /* ═══════════════════════════════════════════════════════════════ */
 </style>
