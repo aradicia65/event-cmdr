@@ -4214,9 +4214,8 @@ function checkCode() {
 
 document.addEventListener('DOMContentLoaded',()=>{
   // ── Gate check ─────────────────────────────────────────────────────────
-  if (sessionStorage.getItem('ec-access') === 'granted') {
-    document.getElementById('gate-overlay').style.display = 'none';
-  }
+  // Always require code entry on fresh load (do not persist via sessionStorage)
+  sessionStorage.removeItem('ec-access');
   // Focus the input on load
   const gateInput = document.getElementById('gate-input');
   if (document.getElementById('gate-overlay').style.display !== 'none') {
